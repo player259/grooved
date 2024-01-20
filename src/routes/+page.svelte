@@ -127,6 +127,10 @@
 
     composition = composition;
     compositionTmp = composition;
+
+    if (isPlaying) {
+      DrumPlayer.play(composition, { ...lastPlayedParams, fromTime: DrumPlayer.getTime() });
+    }
   }
 
   function updateBpm(bpm: number): void {
@@ -135,6 +139,10 @@
 
     composition = composition;
     compositionTmp = composition;
+
+    if (isPlaying) {
+      DrumPlayer.play(composition, { ...lastPlayedParams, fromTime: DrumPlayer.getTime() });
+    }
   }
 
   let compositionTmp = composition;
