@@ -381,8 +381,8 @@
 </script>
 
 <svelte:head>
-  <title>Test example</title>
-  <meta name="description" content="Test example" />
+  <title>Grooved</title>
+  <meta name="description" content="Grooved" />
 </svelte:head>
 
 <style>

@@ -43,6 +43,7 @@
       staffStyle,
       layout,
       detectRepeats,
+      stretch: false,
     });
     svgContent = AbcRenderer.render(abcSource);
 

@@ -675,6 +675,7 @@
                 'p-0 user-select-none text-nowrap',
                 'cell-' + line,
                 'cell-note',
+                'symbol',
                 ['annot', isAnnotation],
                 ['annot-long', isAnnotation && symbol !== undefined && symbol.length > 2],
                 'note-' + (note?.value ?? 'none'),
@@ -688,7 +689,7 @@
               on:contextmenu={(e) => onContextMenuNote(e, line, tick.position, note)}
             >
               {#if isAnnotation && !!symbol}
-                <div class='d-inline-block' title={symbol}>
+                <div class='d-inline-block annot-symbol' title={symbol}>
                   {@html symbol}
                 </div>
               {:else}
@@ -783,11 +784,11 @@
 <div bind:this={noteOptionsFloating} class="floating d-none">
   <ListGroup>
     {#each noteOptions as option}
-      <ListGroupItem class="text-center" tag="button" action on:click={() => {
-          replaceNotes([[option.context.note, option.note]]);
+      <button class="text-center symbol list-group-item list-group-item-action" on:click={() => {
+        replaceNotes([[option.context.note, option.note]]);
 
-          dismissFloatings();
-        }}>{@html option.label}</ListGroupItem>
+        dismissFloatings();
+      }}>{@html option.label}</button>
     {/each}
   </ListGroup>
 </div>
@@ -917,16 +918,22 @@
 
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Symbols+2&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Sans&display=swap');
 
   th, td {
     padding: 0;
     vertical-align: middle;
   }
+  .symbol {
+    font-family: 'Noto Sans Symbols 2', sans-serif;
+  }
   .cell-note {
     cursor: pointer;
     font-size: 1.2em;
     vertical-align: middle;
-    font-family: 'Noto Sans Symbols 2', sans-serif;
+  }
+  .annot-symbol {
+    font-family: 'Noto Sans', sans-serif;
   }
   .label-cell {
     font-weight: normal;

@@ -89,7 +89,7 @@
 </script>
 
 <style>
-    @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Symbols+2&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Symbols+2&display=swap');
 
   .arrow {
     font-family: 'Noto Sans Symbols 2', sans-serif;
@@ -98,6 +98,8 @@
     top: 50%;
     border-radius: 50%;
     transform: translateY(-50%);
+    line-height: 1.2em;
+    padding-top: 0.5em;
   }
   .arrow-left {
     left: 0;
