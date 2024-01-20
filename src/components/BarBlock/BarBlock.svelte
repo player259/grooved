@@ -916,6 +916,11 @@
 </div>
 
 <style>
+  @import url('https://fonts.googleapis.com/css2?family=Open+Sans&display=swap');
+
+  table.bar-block * {
+    font-family: 'Open Sans', sans-serif;
+  }
   th, td {
     padding: 0;
     vertical-align: middle;
