@@ -71,11 +71,15 @@ export const DrumPlayer = {
     Tone.Transport.stop();
     Tone.Transport.cancel(0);
   },
+  getTime(): number {
+    return Tone.Transport.seconds;
+  },
   async play(composition: Composition, params: {
     barRange?: [number?, number?],
     repeat?: boolean,
-    onPlay?: (note: Note) => void,
-    onStop?: () => void,
+    fromTime?: number,
+    onPlay?: (note: Note, time: number) => void,
+    onStop?: (time: number) => void,
   }): Promise<void> {
     // const bgmAudio = await Tone.ToneAudioBuffer.fromUrl(bgmFile);
     // const bgmAudioPlayer = new Tone.GrainPlayer(bgmAudio).toDestination();
@@ -159,21 +163,21 @@ export const DrumPlayer = {
       if (params?.repeat === true) {
         Tone.Transport.scheduleRepeat((time) => {
           player.start(time, 0, duration);
-          params?.onPlay?.(note);
+          params?.onPlay?.(note, time);
         }, playDuration, time + 0.2); // Offset for grace notes to be first
       } else {
         Tone.Transport.scheduleOnce((time) => {
           player.start(time, 0, duration);
-          params?.onPlay?.(note);
+          params?.onPlay?.(note, time);
 
           if (isLastNote) {
-            params?.onStop?.();
+            params?.onStop?.(time);
           }
         }, time + 0.2); // Offset for grace notes to be first
       }
     }
 
-    Tone.Transport.start(`+0s`, startingTime);
+    Tone.Transport.start(`+0s`, params.fromTime ?? startingTime);
   }
 }
 

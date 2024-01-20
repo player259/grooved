@@ -75,6 +75,12 @@
 
   let isPlaying = false;
   let playingBar: number | undefined = undefined;
+  let lastPlayedParams: {
+    barRange?: [number?, number?],
+    onPlay?: (note: Note, time: number) => void,
+    onStop?: (time: number) => void,
+    repeat?: boolean,
+  } | undefined;
 
   const playStop = async () => {
     if (isPlaying) {
@@ -84,8 +90,8 @@
     }
 
     isPlaying = true;
-    await DrumPlayer.play(composition, {
-      onPlay: (note: Note) => highlight = note.position,
+    await DrumPlayer.play(composition, lastPlayedParams = {
+      onPlay: (note: Note, time: number) => highlight = note.position,
       onStop: () => isPlaying = false,
       repeat: true,
     });
@@ -104,9 +110,9 @@
     isPlaying = true;
     callback(isPlaying);
 
-    await DrumPlayer.play(composition, {
+    await DrumPlayer.play(composition, lastPlayedParams = {
       barRange: [bar, bar + 1],
-      onPlay: (note: Note) => highlight = note.position,
+      onPlay: (note: Note, time: number) => highlight = note.position,
       onStop: () => { isPlaying = false; callback(isPlaying); },
       repeat: false,
     });
@@ -155,6 +161,10 @@
 
   function onChangeComposition(updatedComposition: Composition): void {
     composition = updatedComposition;
+
+    if (isPlaying) {
+      DrumPlayer.play(composition, { ...lastPlayedParams, fromTime: DrumPlayer.getTime() });
+    }
   }
 
   $: store.set('composition', composition);
