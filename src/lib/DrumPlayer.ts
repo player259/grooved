@@ -82,6 +82,7 @@ export const DrumPlayer = {
     // bgmAudioPlayer.playbackRate = 1;
 
     if (Tone.context.state !== 'running') {
+      await Tone.context.resume(); // Try for Safari
       await Tone.start();
     }
 

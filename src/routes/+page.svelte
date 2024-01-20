@@ -1,20 +1,11 @@
 <script lang="ts">
   import { createSvg2png, initialize } from 'svg2png-wasm';
+  import * as store from 'store';
 
   import { onMount } from 'svelte';
 
 	import AbcSheet from '$components/AbcSheet/AbcSheet.svelte';
   import type { Composition, Meter, Note, Position } from '$lib/Noted/types';
-  import {
-    ATTR_ACCENT,
-    ATTR_ANNOT_BELOW,
-    ATTR_ANNOT_BORDER,
-    ATTR_ANNOT_SMALLER,
-    TYPE_ANNOT, ATTR_DRAG,
-    DrumNote,
-    ATTR_FLAM,
-    ATTR_GHOST, ATTR_ANNOT_LARGER
-  } from '$lib/Noted/NotedDrums';
 
   import { Noted } from '$lib/Noted/Noted';
   import {
@@ -36,12 +27,12 @@
   import timesNewRomanFont from '$assets/fonts/TimesNewRoman.ttf';
   import arialFont from '$assets/fonts/Arial.ttf';
 
+  import { demoComposition } from '$lib/demoComposition';
+  import { emptyComposition } from '$lib/emptyComposition';
+
   export function throwError(message?: string): never {
     throw new Error(message);
   }
-
-  let meter: Meter = [4, 4];
-  let bpm: number = 120;
 
   let highlight: Position | undefined = undefined;
 
@@ -77,154 +68,10 @@
     multiline: true,
   }
 
-  // let composition: Composition = {
-  //   notes: [
-  //     { value: 'flam', type: TYPE_ANNOT, position: { bar: 0, offset: 0, measure: 4 }, attributes: [ATTR_ANNOT_SMALLER, ATTR_ANNOT_BORDER] },
-  //     { value: 'B', type: TYPE_ANNOT, position: { bar: 0, offset: 1, measure: 4 }, attributes: [ATTR_ANNOT_BELOW] },
-  //     { value: 'C', type: TYPE_ANNOT, position: { bar: 0, offset: 1, measure: 4 } },
-  //     { value: 'D', type: TYPE_ANNOT, position: { bar: 0, offset: 7, measure: 32, tuplet: [7, 4] } },
-  //     { value: DrumNote.BASSDRUM, position: { bar: 0, offset: 0, measure: 4 } },
-  //     { value: DrumNote.BASSDRUM, position: { bar: 0, offset: 2, measure: 4 } },
-  //     { value: DrumNote.SNARE, position: { bar: 0, offset: 0, measure: 4 }, attributes: [ATTR_ACCENT] },
-  //     { value: DrumNote.SNARE, position: { bar: 0, offset: 1, measure: 4 }, attributes: [ATTR_FLAM] },
-  //     { value: DrumNote.SNARE, position: { bar: 0, offset: 3, measure: 8 } },
-  //     { value: DrumNote.SNARE, position: { bar: 0, offset: 3, measure: 4 }, attributes: [ATTR_ACCENT, ATTR_GHOST] },
-  //     { value: DrumNote.HIHAT_CLOSED, position: { bar: 0, offset: 0, measure: 8 } },
-  //     { value: DrumNote.HIHAT_PEDAL, position: { bar: 0, offset: 0, measure: 8 } },
-  //     { value: DrumNote.HIHAT_PEDAL, position: { bar: 0, offset: 2, measure: 4 } },
-  //     { value: DrumNote.HIHAT_PEDAL, position: { bar: 0, offset: 1, measure: 8 } },
-  //     { value: DrumNote.BASSDRUM, position: { bar: 0, offset: 1, measure: 8 }, attributes: [ATTR_ACCENT] },
-  //     { value: DrumNote.HIHAT_CLOSED, position: { bar: 0, offset: 3, measure: 8 } },
-  //     { value: DrumNote.HIHAT_CLOSED, position: { bar: 0, offset: 4, measure: 8 } },
-  //     { value: DrumNote.HIHAT_CLOSED, position: { bar: 0, offset: 5, measure: 8 } },
-  //     { value: DrumNote.HIHAT_OPEN, position: { bar: 0, offset: 6, measure: 8 }, attributes: [ATTR_ACCENT] },
-  //     { value: DrumNote.HIHAT_CLOSED, position: { bar: 0, offset: 7, measure: 8 } },
-  //     { value: DrumNote.SNARE, position: { bar: 0, offset: 7, measure: 32, tuplet: [7, 4] } },
-  //     { value: DrumNote.SNARE, position: { bar: 0, offset: 8, measure: 32, tuplet: [7, 4] } },
-  //     { value: DrumNote.SNARE, position: { bar: 0, offset: 9, measure: 32, tuplet: [7, 4] } },
-  //     { value: DrumNote.SNARE, position: { bar: 0, offset: 10, measure: 32, tuplet: [7, 4] } },
-  //
-  //     { value: DrumNote.BASSDRUM, position: { bar: 1, offset: 0, measure: 4 } },
-  //     { value: DrumNote.SNARE, position: { bar: 1, offset: 1, measure: 4 }, attributes: [ATTR_FLAM, ATTR_GHOST] },
-  //     { value: DrumNote.BASSDRUM, position: { bar: 1, offset: 2, measure: 4 } },
-  //     { value: DrumNote.SNARE, position: { bar: 1, offset: 3, measure: 4 }, attributes: [ATTR_DRAG, ATTR_GHOST] },
-  //
-  //     { value: DrumNote.HIHAT_CLOSED, position: { bar: 2, offset: 0, measure: 8 } },
-  //     { value: DrumNote.HIHAT_CLOSED, position: { bar: 2, offset: 5, measure: 8 } },
-  //     { value: DrumNote.HIHAT_CLOSED, position: { bar: 2, offset: 1, measure: 8 } },
-  //
-  //     { value: DrumNote.HIHAT_CLOSED, position: { bar: 3, offset: 0, measure: 16 } },
-  //     { value: DrumNote.HIHAT_OPEN, position: { bar: 3, offset: 1, measure: 16 } },
-  //     { value: DrumNote.HIHAT_PEDAL, position: { bar: 3, offset: 2, measure: 16 } },
-  //     { value: DrumNote.SNARE, position: { bar: 3, offset: 3, measure: 16 } },
-  //     { value: DrumNote.SIDE_STICK, position: { bar: 3, offset: 4, measure: 16 } },
-  //     { value: DrumNote.BASSDRUM, position: { bar: 3, offset: 5, measure: 16 } },
-  //     { value: DrumNote.HIGH_TOM, position: { bar: 3, offset: 6, measure: 16 } },
-  //     { value: DrumNote.LOW_TOM, position: { bar: 3, offset: 7, measure: 16 } },
-  //     { value: DrumNote.FLOOR_TOM, position: { bar: 3, offset: 8, measure: 16 } },
-  //     { value: DrumNote.RIDE, position: { bar: 3, offset: 9, measure: 16 } },
-  //     { value: DrumNote.RIDE_BELL, position: { bar: 3, offset: 10, measure: 16 } },
-  //     { value: DrumNote.CRASH, position: { bar: 3, offset: 11, measure: 16 } },
-  //
-  //     { value: DrumNote.HIHAT_CLOSED, position: { bar: 4, offset: 0, measure: 16 } },
-  //     { value: DrumNote.HIHAT_OPEN, position: { bar: 4, offset: 1, measure: 16 } },
-  //     { value: DrumNote.HIHAT_PEDAL, position: { bar: 4, offset: 2, measure: 16 } },
-  //     { value: DrumNote.SNARE, position: { bar: 4, offset: 3, measure: 16 } },
-  //     { value: DrumNote.SIDE_STICK, position: { bar: 4, offset: 4, measure: 16 } },
-  //     { value: DrumNote.BASSDRUM, position: { bar: 4, offset: 5, measure: 16 } },
-  //     { value: DrumNote.HIGH_TOM, position: { bar: 4, offset: 6, measure: 16 } },
-  //     { value: DrumNote.LOW_TOM, position: { bar: 4, offset: 7, measure: 16 } },
-  //     { value: DrumNote.FLOOR_TOM, position: { bar: 4, offset: 8, measure: 16 } },
-  //     { value: DrumNote.RIDE, position: { bar: 4, offset: 9, measure: 16 } },
-  //     { value: DrumNote.RIDE_BELL, position: { bar: 4, offset: 10, measure: 16 } },
-  //     { value: DrumNote.CRASH, position: { bar: 4, offset: 11, measure: 16 } },
-  //
-  //     { value: DrumNote.SNARE, position: { bar: 5, offset: 0, measure: 16, tuplet: [6, 4] } },
-  //     { value: DrumNote.SNARE, position: { bar: 5, offset: 1, measure: 16, tuplet: [6, 4] } },
-  //     { value: DrumNote.SNARE, position: { bar: 5, offset: 2, measure: 16, tuplet: [6, 4] } },
-  //     { value: DrumNote.SNARE, position: { bar: 5, offset: 3, measure: 16, tuplet: [6, 4] } },
-  //     { value: DrumNote.SNARE, position: { bar: 5, offset: 4, measure: 16, tuplet: [6, 4] } },
-  //
-  //     { value: DrumNote.SNARE, position: { bar: 6, offset: 0, measure: 16, tuplet: [6, 4] } },
-  //     { value: DrumNote.SNARE, position: { bar: 6, offset: 1, measure: 16, tuplet: [6, 4] } },
-  //     { value: DrumNote.SNARE, position: { bar: 6, offset: 2, measure: 16, tuplet: [6, 4] } },
-  //     { value: DrumNote.SNARE, position: { bar: 6, offset: 3, measure: 16, tuplet: [6, 4] } },
-  //     { value: DrumNote.SNARE, position: { bar: 6, offset: 4, measure: 16, tuplet: [6, 4] } },
-  //
-  //     { value: DrumNote.SNARE, position: { bar: 7, offset: 0, measure: 16, tuplet: [6, 4] } },
-  //     { value: DrumNote.SNARE, position: { bar: 7, offset: 1, measure: 16, tuplet: [6, 4] } },
-  //     { value: DrumNote.SNARE, position: { bar: 7, offset: 2, measure: 16, tuplet: [6, 4] } },
-  //     { value: DrumNote.SNARE, position: { bar: 7, offset: 3, measure: 16, tuplet: [6, 4] } },
-  //     { value: DrumNote.SNARE, position: { bar: 7, offset: 4, measure: 16, tuplet: [6, 4] } },
-  //   ],
-  //   meter: [4, 4],
-  //   meterChanges: [
-  //     { meter: [12, 4], position: { bar: 2 } },
-  //     { meter: [4, 4], position: { bar: 3 } },
-  //   ],
-  //   bpmChanges: [
-  //     { bpm: 70.5, position: { bar: 1 } },
-  //     { bpm: 50, position: { bar: 3 } },
-  //   ],
-  //   bpm: 60,
-  // };
+  let composition: Composition = store.get('composition') ?? demoComposition;
 
-  let composition: Composition = {
-    notes: [
-      { value: DrumNote.HIHAT_CLOSED, position: { bar: 0, offset: 0, measure: 8 } },
-      { value: DrumNote.HIHAT_CLOSED, position: { bar: 0, offset: 1, measure: 8 } },
-      { value: DrumNote.HIHAT_CLOSED, position: { bar: 0, offset: 2, measure: 8 } },
-      { value: DrumNote.HIHAT_CLOSED, position: { bar: 0, offset: 3, measure: 8 } },
-      { value: DrumNote.HIHAT_CLOSED, position: { bar: 0, offset: 4, measure: 8 } },
-      { value: DrumNote.HIHAT_CLOSED, position: { bar: 0, offset: 5, measure: 8 } },
-      { value: DrumNote.HIHAT_CLOSED, position: { bar: 0, offset: 6, measure: 8 } },
-      { value: DrumNote.HIHAT_CLOSED, position: { bar: 0, offset: 7, measure: 8 } },
-      { value: DrumNote.BASSDRUM, position: { bar: 0, offset: 0, measure: 8 } },
-      { value: DrumNote.BASSDRUM, position: { bar: 0, offset: 4, measure: 8 } },
-      { value: DrumNote.BASSDRUM, position: { bar: 0, offset: 5, measure: 8 } },
-      { value: DrumNote.SNARE, position: { bar: 0, offset: 2, measure: 8 } },
-      { value: DrumNote.SNARE, position: { bar: 0, offset: 6, measure: 8 } },
-
-      { value: DrumNote.HIHAT_CLOSED, position: { bar: 1, offset: 0, measure: 8 } },
-      { value: DrumNote.HIHAT_CLOSED, position: { bar: 1, offset: 1, measure: 8 } },
-      { value: DrumNote.HIHAT_CLOSED, position: { bar: 1, offset: 2, measure: 8 } },
-      { value: DrumNote.HIHAT_CLOSED, position: { bar: 1, offset: 3, measure: 8 } },
-      { value: DrumNote.HIHAT_CLOSED, position: { bar: 1, offset: 4, measure: 8 } },
-      { value: DrumNote.HIHAT_CLOSED, position: { bar: 1, offset: 5, measure: 8 } },
-      { value: DrumNote.HIHAT_CLOSED, position: { bar: 1, offset: 6, measure: 8 } },
-      { value: DrumNote.HIHAT_CLOSED, position: { bar: 1, offset: 7, measure: 8 } },
-      { value: DrumNote.BASSDRUM, position: { bar: 1, offset: 0, measure: 8 } },
-      { value: DrumNote.BASSDRUM, position: { bar: 1, offset: 4, measure: 8 } },
-      { value: DrumNote.BASSDRUM, position: { bar: 1, offset: 5, measure: 8 } },
-      { value: DrumNote.SNARE, position: { bar: 1, offset: 2, measure: 8 } },
-      { value: DrumNote.SNARE, position: { bar: 1, offset: 6, measure: 8 } },
-
-      { value: DrumNote.HIHAT_CLOSED, position: { bar: 2, offset: 0, measure: 8 } },
-      { value: DrumNote.HIHAT_CLOSED, position: { bar: 2, offset: 1, measure: 8 } },
-      { value: DrumNote.HIHAT_CLOSED, position: { bar: 2, offset: 2, measure: 8 } },
-      { value: DrumNote.HIHAT_CLOSED, position: { bar: 2, offset: 3, measure: 8 } },
-      { value: DrumNote.HIHAT_CLOSED, position: { bar: 2, offset: 4, measure: 8 } },
-      { value: DrumNote.HIHAT_CLOSED, position: { bar: 2, offset: 5, measure: 8 } },
-      { value: DrumNote.HIHAT_CLOSED, position: { bar: 2, offset: 6, measure: 8 } },
-      { value: DrumNote.HIHAT_CLOSED, position: { bar: 2, offset: 7, measure: 8 } },
-      { value: DrumNote.BASSDRUM, position: { bar: 2, offset: 0, measure: 8 } },
-      { value: DrumNote.BASSDRUM, position: { bar: 2, offset: 4, measure: 8 } },
-      { value: DrumNote.BASSDRUM, position: { bar: 2, offset: 5, measure: 8 } },
-      { value: DrumNote.SNARE, position: { bar: 2, offset: 2, measure: 8 } },
-      { value: DrumNote.SNARE, position: { bar: 2, offset: 6, measure: 8 } },
-
-      { value: DrumNote.SNARE, position: { bar: 3, offset: 0, measure: 8 } },
-      { value: DrumNote.SNARE, position: { bar: 3, offset: 1, measure: 8 } },
-      { value: DrumNote.HIGH_TOM, position: { bar: 3, offset: 2, measure: 8 } },
-      { value: DrumNote.HIGH_TOM, position: { bar: 3, offset: 3, measure: 8 } },
-      { value: DrumNote.LOW_TOM, position: { bar: 3, offset: 4, measure: 8 } },
-      { value: DrumNote.LOW_TOM, position: { bar: 3, offset: 5, measure: 8 } },
-      { value: DrumNote.FLOOR_TOM, position: { bar: 3, offset: 6, measure: 8 } },
-      { value: DrumNote.FLOOR_TOM, position: { bar: 3, offset: 7, measure: 8 } },
-    ],
-    meter,
-    bpm,
-  };
+  let meter: Meter = composition.meter;
+  let bpm: number = composition.bpm;
 
   let isPlaying = false;
   let playingBar: number | undefined = undefined;
@@ -308,6 +155,16 @@
 
   function onChangeComposition(updatedComposition: Composition): void {
     composition = updatedComposition;
+  }
+
+  $: store.set('composition', composition);
+
+  function loadComposition(newComposition: Composition): void {
+    composition = compositionTmp = newComposition;
+    meter = meterTmp = newComposition.meter;
+    bpm = bpmTmp = newComposition.bpm;
+
+    store.set('composition', newComposition);
   }
 
   function onChangeScale(e: Event, diff: number) {
@@ -588,6 +445,10 @@
       on:playBar={(e) => playStopBar(e.detail.bar, e.detail?.callback)}
     />
   {/key}
+</Container>
+<Container lg class="mb-5">
+  <Button color="light" on:click={() => loadComposition(demoComposition)}>Load demo</Button>
+  <Button color="light" on:click={() => loadComposition(emptyComposition)}>Clear</Button>
 </Container>
 
 <Modal on:open={() => onClickRender()} centered size='lg' isOpen={isSvgModalOpened} toggle={() => isSvgModalOpened = false}>
