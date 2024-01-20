@@ -89,10 +89,10 @@
 </script>
 
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Open+Sans&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Symbols+2&display=swap');
 
   .arrow {
-    font-family: 'Open Sans', sans-serif;
+    font-family: 'Noto Sans Symbols 2', sans-serif;
     font-size: x-large;
     position: absolute;
     top: 50%;

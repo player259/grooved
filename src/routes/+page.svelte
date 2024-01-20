@@ -579,7 +579,7 @@
     />
   </div>
 </Container>
-<Container lg>
+<Container lg class="mb-5">
   {#key compositionTmp}
     <CompositionBlock
       composition={ compositionTmp }

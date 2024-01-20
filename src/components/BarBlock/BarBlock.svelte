@@ -916,11 +916,8 @@
 </div>
 
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Open+Sans&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Symbols+2&display=swap');
 
-  table.bar-block * {
-    font-family: 'Open Sans', sans-serif;
-  }
   th, td {
     padding: 0;
     vertical-align: middle;
@@ -929,9 +926,13 @@
     cursor: pointer;
     font-size: 1.2em;
     vertical-align: middle;
+    font-family: 'Noto Sans Symbols 2', sans-serif;
   }
   .label-cell {
     font-weight: normal;
+    vertical-align: text-bottom;
+    line-height: 1.2em;
+    height: 1.2em;
   }
   .label-hh, .label-sn, .label-bd {
     font-weight: bold;
@@ -1004,9 +1005,6 @@
   }
   .annotation-preview.border {
     border: 2px black solid !important;
-  }
-  .part-header, .label-cell {
-    vertical-align: middle;
   }
   .note-part-odd, .part-header-odd {
     /*background-color: var(--bs-gray-200) !important;*/
