@@ -96,11 +96,8 @@
 
   // Validate notes
   $: {
-    if (notes.map(n => 'offset' in n.position ? n.position.tuplet : undefined).filter(t => !!t).some((t, i, arr) => !isTupletEqual(t, arr[0]))) {
-      throw new Error(`Notes can't have different tuplets in one bar`);
-    }
     if (notes.some(n => n.position.bar !== bar)) {
-      throw new Error(`Notes can't have different tuplets in one bar`);
+      throw new Error(`Notes should belong to one bar`);
     }
   }
 
@@ -433,11 +430,7 @@
       return false;
     }
 
-    if (parts.map(p => p.tuplet).every(t => !t || isTupletEqual(t, tuplet))) {
-      return true;
-    }
-
-    return parts.map(p => p.tuplet).filter(t => !!t).length === 1 && part.tuplet !== undefined;
+    return true;
   }
 
   function toggleLine(line: Line): void {

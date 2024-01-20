@@ -245,7 +245,7 @@ function buildAbcBar(notes: Note[], partSize: number, partOffset: number, measur
         break;
       }
       // Found other notes, grouping not possible
-      if (noteMap.slice(i + 1, i + grouping * multiplier).filter(n => n.length > 0).length !== 0) {
+      if (noteMap.slice(i + 1, i + grouping * multiplier).filter(n => n.filter(v => v !== 'EMPTY').length > 0).length !== 0) {
         break;
       }
 
