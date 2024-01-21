@@ -81,6 +81,7 @@
     onStop?: (time: number) => void,
     repeat?: boolean,
   } | undefined;
+  let lastPlayedPosition: Position | undefined;
 
   const playStop = async () => {
     if (isPlaying) {
@@ -91,7 +92,7 @@
 
     isPlaying = true;
     await DrumPlayer.play(composition, lastPlayedParams = {
-      onPlay: (note: Note, time: number) => highlight = note.position,
+      onPlay: (note: Note, time: number) => { highlight = note.position; lastPlayedPosition = note.position; },
       onStop: () => isPlaying = false,
       repeat: true,
     });
@@ -112,7 +113,7 @@
 
     await DrumPlayer.play(composition, lastPlayedParams = {
       barRange: [bar, bar + 1],
-      onPlay: (note: Note, time: number) => highlight = note.position,
+      onPlay: (note: Note, time: number) => { highlight = note.position; lastPlayedPosition = note.position; },
       onStop: () => { isPlaying = false; callback(isPlaying); },
       repeat: false,
     });
@@ -129,7 +130,7 @@
     compositionTmp = composition;
 
     if (isPlaying) {
-      DrumPlayer.play(composition, { ...lastPlayedParams, fromTime: DrumPlayer.getTime() });
+      DrumPlayer.play(composition, { ...lastPlayedParams, fromPosition: lastPlayedPosition });
     }
   }
 
@@ -141,7 +142,7 @@
     compositionTmp = composition;
 
     if (isPlaying) {
-      DrumPlayer.play(composition, { ...lastPlayedParams, fromTime: DrumPlayer.getTime() });
+      DrumPlayer.play(composition, { ...lastPlayedParams, fromPosition: lastPlayedPosition });
     }
   }
 

@@ -22,7 +22,7 @@ import * as Tone from 'tone';
 import { ATTR_DRAG, ATTR_FLAM, ATTR_GHOST, DrumNote } from '$lib/Noted/NotedDrums';
 
 import { Noted } from '$lib/Noted/Noted';
-import type { Composition, Note } from '$lib/Noted/types';
+import type { Composition, Note, Position } from '$lib/Noted/types';
 
 const noteMap: Array<[DrumNote, string[], string, number, DrumNote[]]> = [
   [DrumNote.HIHAT_CLOSED, [], soundHihatClose, 0, []],
@@ -78,6 +78,7 @@ export const DrumPlayer = {
     barRange?: [number?, number?],
     repeat?: boolean,
     fromTime?: number,
+    fromPosition?: Position,
     onPlay?: (note: Note, time: number) => void,
     onStop?: (time: number) => void,
   }): Promise<void> {
@@ -177,7 +178,10 @@ export const DrumPlayer = {
       }
     }
 
-    Tone.Transport.start(`+0s`, params.fromTime ?? startingTime);
+    let offset = params.fromTime
+      ?? (params.fromPosition !== undefined ? Noted.calculatePositionTime(params.fromPosition, timeKeys) : undefined)
+      ?? startingTime;
+
+    Tone.Transport.start(`+0s`, offset);
   }
 }
-
